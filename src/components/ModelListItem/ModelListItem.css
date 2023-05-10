@@ -1,0 +1,13 @@
+.header:hover {
+  transform: translate(0, -3px);
+  transition: transform ease 300ms;
+  cursor: pointer;
+}
+
+.arrow {
+  transition: transform 0.25s ease-out;
+}
+
+.content {
+  transition: transform 0.25s ease-out;
+}
