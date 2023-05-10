@@ -5,9 +5,11 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #C1D0B5;
-  background: rgb(153,169,143);
-  background: linear-gradient(90deg, rgba(153,169,143,1) 0%, rgba(193,208,181,1) 41%, rgba(199,215,192,1) 72%, rgba(214,232,219,1) 97%);
+  /* background-color: #C1D0B5; */
+  /* background: rgb(153,169,143);
+  background: linear-gradient(90deg, rgba(153,169,143,1) 0%, rgba(193,208,181,1) 41%, rgba(199,215,192,1) 72%, rgba(214,232,219,1) 97%); */
+  background: rgb(209,219,202);
+  background: linear-gradient(90deg, rgba(209,219,202,1) 0%, rgba(197,213,183,1) 23%, rgba(225,238,219,1) 68%, rgba(232,240,234,1) 97%);
 }
 
 code {

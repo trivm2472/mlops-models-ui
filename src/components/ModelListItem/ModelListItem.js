@@ -1,5 +1,5 @@
 import React from "react";
-import arrowicons from "../../images/arrowdown.png";
+import arrowicons from "../../images/arrowdown-black.png";
 import "./ModelListItem.css";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
@@ -49,7 +49,7 @@ export default function ModelListItem({ name, versionArray }) {
   return (
     <div
       style={{
-        width: "80%",
+        width: "85%",
         margin: "auto",
         marginTop: 50,
       }}
@@ -65,6 +65,7 @@ export default function ModelListItem({ name, versionArray }) {
           marginBottom: 0,
           borderBottomStyle: "solid",
           borderBottomColor: "gray",
+          borderBottomWidth: 1.2
         }}
         onClick={() => {
           setOpen(!open);
@@ -72,14 +73,14 @@ export default function ModelListItem({ name, versionArray }) {
         }}
       >
         <div
-          style={{ fontSize: 42, fontWeight: 700, marginLeft: "5%", flex: 10 }}
+          style={{ fontSize: 36, fontWeight: 700, marginLeft: "5%", flex: 10, color: '#655DBB' }}
         >
           {name}
         </div>
         <img
           className="arrow"
           src={arrowicons}
-          style={{ marginRight: "5%", transform: `rotate(${rotation}deg)` }}
+          style={{ marginRight: "5%", transform: `rotate(${rotation}deg)`, width: 40, height: 40 }}
         />
       </div>
 
