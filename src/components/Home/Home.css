@@ -1,3 +1,7 @@
 .search-button:hover {
   cursor: pointer;
 }
+
+.deploy-button:hover {
+  cursor: pointer;
+}

@@ -1,11 +1,58 @@
 import React from "react";
 import arrowicons from "../../images/arrowdown-black.png";
 import "./ModelListItem.css";
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { DeployModelContext } from "../../useContext/DeployModelContext";
 
-export default function ModelListItem({ name, versionArray }) {
-  function VersionItem({ versionId, date, modelId }) {
+export default function ModelListItem({ name, versionArray, setRender, setDeployedData, deployedData}) {
+  const [checkedModelId, setCheckedModelId] = useState(-1);
+  function VersionItem({ versionId, date, modelId, modelName}) {
+    function checkDeployed(){
+      if(checkedModelId == modelId){
+        return true
+      }
+      return false;
+    }
+    function checkDisabled(){
+      if(checkedModelId == modelId){
+        return false
+      }
+      if(checkedModelId == -1){
+        return false
+      }
+      return true;
+    }
+    var isCheckedInit = checkDeployed() ? true : false; 
+    const [isChecked, setIsChecked] = useState(isCheckedInit);
+    
+    function handleCheckboxChange() {
+      if(checkedModelId == modelId){
+        var arr = deployedData;
+        arr = arr.filter((obj) => {
+          return obj.id != modelId;
+        });
+        setDeployedData(arr);
+        setCheckedModelId(-1);
+      }
+      else{
+        var arr = deployedData;
+        var temp = {"id": modelId, "version": versionId, "modelName": modelName}
+        arr = [...arr, temp];
+        setDeployedData(arr);
+        setCheckedModelId(modelId);
+      }
+      setRender(true);
+
+      setIsChecked(!isChecked);
+    }
+    useEffect(() => {
+      for(let i = 0; i < deployedData.length; i++){
+        if(modelId == deployedData[i].id){
+          setCheckedModelId(modelId);
+        }
+      }
+    }, [])
     return (
       <div
         style={{
@@ -31,27 +78,35 @@ export default function ModelListItem({ name, versionArray }) {
           Version {versionId}
         </Link>
         <p style={{ flex: 2, textAlign: "center" }}>{date}</p>
+        <input
+          type="checkbox"
+          checked={isChecked}
+          onChange={handleCheckboxChange}
+          style={{ flex: 3 }}
+          disabled={checkDisabled() ? true : false}
+        />
       </div>
     );
   }
   const [open, setOpen] = useState(false);
   const [rotation, setRotation] = useState(90);
+  const navigate = useNavigate();
 
   const handleClick = () => {
     if (rotation == 90) {
       setRotation(rotation - 90);
-    }
-    else {
+    } else {
       setRotation(rotation + 90);
     }
-    
   };
+
+  
   return (
     <div
       style={{
-        width: "85%",
+        width: "90%",
         margin: "auto",
-        marginTop: 50,
+        marginTop: 20,
       }}
     >
       <div
@@ -63,24 +118,59 @@ export default function ModelListItem({ name, versionArray }) {
           justifyContent: "center",
           alignItems: "center",
           marginBottom: 0,
-          borderBottomStyle: "solid",
-          borderBottomColor: "gray",
-          borderBottomWidth: 1.2
-        }}
-        onClick={() => {
-          setOpen(!open);
-          handleClick()
+          borderStyle: "solid",
+          borderColor: "gray",
+          borderWidth: 1.2,
+          backgroundColor: "#4593C6",
+          borderRadius: 5,
         }}
       >
         <div
-          style={{ fontSize: 36, fontWeight: 700, marginLeft: "5%", flex: 10, color: '#655DBB' }}
+          className="arrow"
+          style={{
+            fontSize: 36,
+            fontWeight: 700,
+            marginLeft: "5%",
+            flex: 10,
+            color: "#FFFFFF",
+          }}
+          onClick={() => {
+            setOpen(!open);
+            handleClick();
+          }}
         >
           {name}
         </div>
+        <input
+          className="monitor-button"
+          type="button"
+          value="Monitor"
+          style={{
+            marginRight: 60,
+            fontSize: 24,
+            paddingLeft: 16,
+            paddingRight: 16,
+            borderRadius: 5,
+            backgroundColor: "#D9D9D9",
+            borderWidth: 1.2,
+          }}
+          onClick={() => {
+            navigate(`/monitor/${name}`);
+          }}
+        />
         <img
           className="arrow"
           src={arrowicons}
-          style={{ marginRight: "5%", transform: `rotate(${rotation}deg)`, width: 40, height: 40 }}
+          style={{
+            marginRight: "5%",
+            transform: `rotate(${rotation}deg)`,
+            width: 40,
+            height: 40,
+          }}
+          onClick={() => {
+            setOpen(!open);
+            handleClick();
+          }}
         />
       </div>
 
@@ -91,7 +181,7 @@ export default function ModelListItem({ name, versionArray }) {
           borderStyle: "solid",
           borderColor: "black",
           backgroundColor: "#C8EDE8",
-          borderRadius: 30,
+          borderRadius: 5,
           paddingBottom: 10,
           border: 1,
           display: open ? "" : "none",
@@ -112,6 +202,9 @@ export default function ModelListItem({ name, versionArray }) {
           <p style={{ flex: 2, textAlign: "center", color: "#808388" }}>
             Date added
           </p>
+          <p style={{ flex: 3, textAlign: "center", color: "#808388" }}>
+            Deploying
+          </p>
         </div>
         {versionArray.map((item, key) => {
           return (
@@ -119,6 +212,7 @@ export default function ModelListItem({ name, versionArray }) {
               versionId={item.version}
               date={item.date}
               modelId={item.id}
+              modelName={name}
             />
           );
         })}

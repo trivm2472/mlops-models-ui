@@ -1,0 +1,28 @@
+.my-table {
+  border-collapse: collapse;
+  border: 1px solid black;
+}
+
+.my-table th, .my-table td {
+  padding: 8px;
+  border: 1px solid black;
+}
+
+.my-table th {
+  background-color: #4593C6;
+  color: white;
+}
+
+.blue-row {
+  background-color: #E8FFFF;
+  /* color: white; */
+}
+
+.red-row {
+  background-color: #F9F9F9;
+  /* color: white; */
+}
+
+td {
+  text-align: center;
+}

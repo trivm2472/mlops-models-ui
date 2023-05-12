@@ -1,4 +1,4 @@
-.header:hover {
+.arrow:hover {
   transform: translate(0, -3px);
   transition: transform ease 300ms;
   cursor: pointer;
@@ -10,4 +10,8 @@
 
 .content {
   transition: transform 0.25s ease-out;
+}
+
+.monitor-button:hover {
+  cursor: pointer;
 }
