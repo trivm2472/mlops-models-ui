@@ -4,6 +4,7 @@ import "./Monitor.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+
 export default function Monitor() {
   const navigate = useNavigate();
   const { name } = useParams();
@@ -136,7 +137,8 @@ export default function Monitor() {
                 <td>{item.version}</td>
                 <td>{item.monitorResult.date}</td>
                 <td>{item.monitorResult.class}</td>
-                <td>{item.monitorResult.className}</td>
+                {/* <td>{item.monitorResult.className}</td> */}
+                <td>V.Hoang</td>
                 <td>{item.monitorResult.confidence}</td>
               </tr>
             ))}

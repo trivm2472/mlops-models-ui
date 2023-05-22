@@ -5,6 +5,12 @@ import { useState, useContext } from "react";
 import "./Home.css";
 import { DeployModelContext } from "../../useContext/DeployModelContext";
 import _ from "lodash";
+import JenkinsConfig from "../../jenkinsconfig/JenkinsConfig";
+
+axios.defaults.auth = {
+  username: JenkinsConfig.username,
+  password: JenkinsConfig.token,
+};
 
 export default function Home() {
   const [data, setData] = useState([]);
@@ -60,7 +66,7 @@ export default function Home() {
           paddingBottom: 10,
         }}
       >
-        MLops models tracking UI
+        MLOps models tracking UI
       </div>
       <div
         style={{
@@ -217,8 +223,10 @@ export default function Home() {
               for (let i = 0; i < arr2.length; i++) {
                 versionArr2.push(arr2[i].id);
               }
+              if (versionArr1.length == 0) return;
               if (_.isEqual(versionArr1, versionArr2)) {
                 alert("Those models have already been deploy");
+              } else if (1 == 2) {
               } else {
                 try {
                   const response = await axios.post(
@@ -232,6 +240,52 @@ export default function Home() {
                   );
                   setDeployedData(deployedModel.data);
                   setValue(deployedModel.data);
+
+                  // Jenkin api
+                  var modelNameString = "";
+                  var versionString = "";
+
+                  if (deployedData.length == 1) {
+                    modelNameString = deployedData[0].modelName;
+                    versionString = deployedData[0].version;
+                  } else {
+                    modelNameString = deployedData[0].modelName;
+                    versionString = deployedData[0].version;
+                    for (let i = 1; i < deployedData.length; i++) {
+                      modelNameString += "," + deployedData[i].modelName;
+                      versionString += "," + deployedData[i].version;
+                    }
+                  }
+                  
+                  console.log("modelNameString", modelNameString);
+                  console.log("versionString", versionString);
+                  // Check if image exist for model:
+                  const images = await axios.post(
+                    `http://localhost:4000/deploy/getSaveImage`,
+                    {
+                      versionList: versionString,
+                      modelListName: modelNameString,
+                    }
+                  );
+
+                  console.log(images);
+
+                  if(images.data.length > 0) {
+                    const jenkinResponse1 = await axios.post(
+                      `${JenkinsConfig.jenkinsURL}/job/BUILD_BACKEND_IMAGE_MLOPS/job/main/buildWithParameters?
+                      MODEL_NAME=${modelNameString}&MODEL_VERSION=${versionString}&IMAGE_NAME=${images.data[0].image}dp`,
+                      {}
+                    );
+                    alert("deploying image");
+                    return;
+                  }
+                  const jenkinResponse2 = await axios.post(
+                    `${JenkinsConfig.jenkinsURL}/job/BUILD_BACKEND_IMAGE_MLOPS/job/main/buildWithParameters?
+                    MODEL_NAME=${modelNameString}&MODEL_VERSION=${versionString}&IMAGE_NAME=imagename`,
+                    {}
+                  );
+                  // End jenkin api
+
                   alert("models deploy successful");
                 } catch (error) {
                   console.error(error);
