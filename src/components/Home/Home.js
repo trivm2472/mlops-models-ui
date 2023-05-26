@@ -6,6 +6,7 @@ import "./Home.css";
 import { DeployModelContext } from "../../useContext/DeployModelContext";
 import _ from "lodash";
 import JenkinsConfig from "../../jenkinsconfig/JenkinsConfig";
+import apiConfig from "../../apiConfig/apiConfig";
 
 axios.defaults.auth = {
   username: JenkinsConfig.username,
@@ -40,10 +41,10 @@ export default function Home() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await axios("http://localhost:4000");
+      const result = await axios(`${apiConfig.vercelURL}`);
       setData(result.data);
       setSearchData(result.data);
-      const deployedResult = await axios("http://localhost:4000/deployed");
+      const deployedResult = await axios(`${apiConfig.vercelURL}/deployed`);
       setDeployedData(deployedResult.data);
     };
 
@@ -230,13 +231,13 @@ export default function Home() {
               } else {
                 try {
                   const response = await axios.post(
-                    "http://localhost:4000/deploy",
+                    `${apiConfig.vercelURL}/deploy`,
                     {
                       modelIdList: versionArr1,
                     }
                   );
                   const deployedModel = await axios(
-                    "http://localhost:4000/deployed"
+                    `${apiConfig.vercelURL}/deployed`
                   );
                   setDeployedData(deployedModel.data);
                   setValue(deployedModel.data);
@@ -261,7 +262,7 @@ export default function Home() {
                   console.log("versionString", versionString);
                   // Check if image exist for model:
                   const images = await axios.post(
-                    `http://localhost:4000/deploy/getSaveImage`,
+                    `${apiConfig.vercelURL}/deploy/getSaveImage`,
                     {
                       versionList: versionString,
                       modelListName: modelNameString,

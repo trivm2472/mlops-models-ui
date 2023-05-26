@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import "./Monitor.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import apiConfig from "../../apiConfig/apiConfig";
 
 
 export default function Monitor() {
@@ -41,7 +42,7 @@ export default function Monitor() {
   // ];
   useEffect(() => {
     const fetchData = async () => {
-      const result = await axios(`http://localhost:4000/monitor/${name}`);
+      const result = await axios(`${apiConfig.vercelURL}/monitor/${name}`);
       setData(result.data);
       console.log(data);
     };

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import "./Model.css";
 import arrowicons from "../../images/arrowdown-black.png";
 import homeIcons from "../../images/home.png";
+import apiConfig from "../../apiConfig/apiConfig";
 
 export default function Model() {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ export default function Model() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await axios(`http://localhost:4000/model/${id}`);
+      const result = await axios(`${apiConfig.vercelURL}/model/${id}`);
       result.data[0].resultFile = JSON.parse(result.data[0].resultFile);
       setData(result.data[0]);
     };
