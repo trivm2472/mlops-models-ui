@@ -5,8 +5,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Monitor from "./components/Monitor/Monitor";
 import { createContext } from "react";
 import MyProvider from "./MyProvider";
+import { useEffect } from "react";
 
 function App() {
+  useEffect(() => {
+    document.title = 'MLOps models tracking UI'; // Replace 'New Page Title' with your desired title
+  }, []);
   return (
     <>
       {/* <div
