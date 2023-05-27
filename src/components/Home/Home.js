@@ -82,6 +82,9 @@ export default function Home() {
           } else if (1 == 2) {
           } else {
             try {
+              const deployedModel = await axios(
+                `${apiConfig.vercelURL}/deployed`
+              );
               setDeployedData(deployedModel.data);
               setValue(deployedModel.data);
 
@@ -116,16 +119,15 @@ export default function Home() {
 
               if (images.data.length > 0) {
                 const jenkinResponse1 = await axios.post(
-                  `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job2}/job/main/buildWithParameters?
-                      IMAGE_NAME=${images.data[0].image}dp`,
+                  `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job2}/job/main/buildWithParameters?IMAGE_NAME=${images.data[0].image}dp`,
                   {}
                 );
                 alert("Deploying image");
                 return;
               }
+              const seqImage = await axios.get(`${apiConfig.vercelURL}/addImageSeq`)
               const jenkinResponse2 = await axios.post(
-                `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job}/buildWithParameters?
-                    MODEL_NAME=${modelNameString}&MODEL_VERSION=${versionString}&IMAGE_NAME=imagename`,
+                `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job}/buildWithParameters?MODEL_NAME=${modelNameString}&MODEL_VERSION=${versionString}&IMAGE_NAME=imagename${seqImage.data}`,
                 {}
               );
               // End jenkins session
@@ -135,9 +137,7 @@ export default function Home() {
                   modelIdList: versionArr1,
                 }
               );
-              const deployedModel = await axios(
-                `${apiConfig.vercelURL}/deployed`
-              );
+              
 
               alert("Models deploy successful");
             } catch (error) {
