@@ -127,7 +127,7 @@ export default function Home() {
               }
               const seqImage = await axios.get(`${apiConfig.vercelURL}/addImageSeq`)
               const jenkinResponse2 = await axios.post(
-                `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job}/buildWithParameters?MODEL_NAME=${modelNameString}&MODEL_VERSION=${versionString}&IMAGE_NAME=imagename${seqImage.data}`,
+                `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job}/buildWithParameters?MODEL_NAME=${modelNameString}&MODEL_VERSION=${versionString}&IMAGE_NAME=deployedImage${seqImage.data}`,
                 {}
               );
               // End jenkins session
