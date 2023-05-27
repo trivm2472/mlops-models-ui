@@ -10,41 +10,25 @@ export default function Monitor() {
   const navigate = useNavigate();
   const { name } = useParams();
   const [data, setData] = useState([]);
-  // const data = [
-  //   {
-  //     version: "1.0",
-  //     date: "2022-05-01",
-  //     class: "Math",
-  //     className: "Calculus",
-  //     conf: "90%",
-  //   },
-  //   {
-  //     version: "1.1",
-  //     date: "2022-05-15",
-  //     class: "Science",
-  //     className: "Physics",
-  //     conf: "85%",
-  //   },
-  //   {
-  //     version: "1.2",
-  //     date: "2022-06-01",
-  //     class: "English",
-  //     className: "Grammar",
-  //     conf: "95%",
-  //   },
-  //   {
-  //     version: "1.3",
-  //     date: "2022-06-15",
-  //     class: "History",
-  //     className: "World War II",
-  //     conf: "87%",
-  //   },
-  // ];
   useEffect(() => {
     const fetchData = async () => {
-      const result = await axios(`${apiConfig.vercelURL}/monitor/${name}`);
-      setData(result.data);
-      console.log(data);
+      const result = await axios.get(`${apiConfig.vercelURL}/monitor/${name}`);
+      var result2 = [];
+      for(let i = 0; i < result.data.length; i++){
+        var temp = JSON.parse(result.data[i].monitorResult);
+        for(let j = 0; j < temp.length; j++){
+          var element = {
+            version: result.data[i].version,
+            date: result.data[i].date,
+            className: temp[j] ? temp[j].className : "null",
+            class: temp[j] ? temp[j].class : "null",
+            confidence: temp[j] ? temp[j].confidence : "null",
+          }
+          result2.push(element);
+        }
+      }
+      console.log(result2);
+      setData(result2);
     };
 
     fetchData();
@@ -136,11 +120,11 @@ export default function Monitor() {
                 key={index}
               >
                 <td>{item.version}</td>
-                <td>{item.monitorResult.date}</td>
-                <td>{item.monitorResult.class}</td>
+                <td>{item.date ? item.date : 'null'}</td>
+                <td>{item.class}</td>
                 {/* <td>{item.monitorResult.className}</td> */}
-                <td>V.Hoang</td>
-                <td>{item.monitorResult.confidence}</td>
+                <td>{item.className ? item.className : 'null'}</td>
+                <td>{item.confidence}</td>
               </tr>
             ))}
           </tbody>

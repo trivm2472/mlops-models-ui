@@ -177,6 +177,28 @@ export default function Model() {
               <h3 style={{ marginRight: 22 }}>- epochs:</h3>
               <h3>{data ? data.epochs : ""}</h3>
             </span>
+            <span
+              style={{
+                display: "flex",
+                alignItems: "baseline",
+                marginTop: -5,
+                marginLeft: 20,
+              }}
+            >
+              <h3 style={{ marginRight: 22 }}>- Data url:</h3>
+              <h3>{data.dataUrl ? data.dataUrl : "null"}</h3>
+            </span>
+            <span
+              style={{
+                display: "flex",
+                alignItems: "baseline",
+                marginTop: -5,
+                marginLeft: 20,
+              }}
+            >
+              <h3 style={{ marginRight: 22 }}>- Weight file:</h3>
+              <h3>{data.weightFile ? data.weightFile : "null"}</h3>
+            </span>
           </div>
           <div
             className="header"

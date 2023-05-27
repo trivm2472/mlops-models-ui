@@ -6,6 +6,7 @@ import Monitor from "./components/Monitor/Monitor";
 import { createContext } from "react";
 import MyProvider from "./MyProvider";
 import { useEffect } from "react";
+import Popup from "./components/PopUp/PopUp.js";
 
 function App() {
   useEffect(() => {
@@ -35,6 +36,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="model/:id" element={<Model />} />
             <Route path="monitor/:name" element={<Monitor />} />
+            <Route path="popup" element={<Popup />} />
           </Routes>
         </BrowserRouter>
       </MyProvider>

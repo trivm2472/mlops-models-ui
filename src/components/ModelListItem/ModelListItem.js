@@ -5,39 +5,44 @@ import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { DeployModelContext } from "../../useContext/DeployModelContext";
 
-export default function ModelListItem({ name, versionArray, setRender, setDeployedData, deployedData}) {
+export default function ModelListItem({
+  name,
+  versionArray,
+  setRender,
+  setDeployedData,
+  deployedData,
+}) {
   const [checkedModelId, setCheckedModelId] = useState(-1);
-  function VersionItem({ versionId, date, modelId, modelName}) {
-    function checkDeployed(){
-      if(checkedModelId == modelId){
-        return true
+  function VersionItem({ versionId, date, modelId, modelName }) {
+    function checkDeployed() {
+      if (checkedModelId == modelId) {
+        return true;
       }
       return false;
     }
-    function checkDisabled(){
-      if(checkedModelId == modelId){
-        return false
+    function checkDisabled() {
+      if (checkedModelId == modelId) {
+        return false;
       }
-      if(checkedModelId == -1){
-        return false
+      if (checkedModelId == -1) {
+        return false;
       }
       return true;
     }
-    var isCheckedInit = checkDeployed() ? true : false; 
+    var isCheckedInit = checkDeployed() ? true : false;
     const [isChecked, setIsChecked] = useState(isCheckedInit);
-    
+
     function handleCheckboxChange() {
-      if(checkedModelId == modelId){
+      if (checkedModelId == modelId) {
         var arr = deployedData;
         arr = arr.filter((obj) => {
           return obj.id != modelId;
         });
         setDeployedData(arr);
         setCheckedModelId(-1);
-      }
-      else{
+      } else {
         var arr = deployedData;
-        var temp = {"id": modelId, "version": versionId, "modelName": modelName}
+        var temp = { id: modelId, version: versionId, modelName: modelName };
         arr = [...arr, temp];
         setDeployedData(arr);
         setCheckedModelId(modelId);
@@ -47,12 +52,12 @@ export default function ModelListItem({ name, versionArray, setRender, setDeploy
       setIsChecked(!isChecked);
     }
     useEffect(() => {
-      for(let i = 0; i < deployedData.length; i++){
-        if(modelId == deployedData[i].id){
+      for (let i = 0; i < deployedData.length; i++) {
+        if (modelId == deployedData[i].id) {
           setCheckedModelId(modelId);
         }
       }
-    }, [])
+    }, []);
     return (
       <div
         style={{
@@ -100,7 +105,6 @@ export default function ModelListItem({ name, versionArray, setRender, setDeploy
     }
   };
 
-  
   return (
     <div
       style={{
@@ -196,13 +200,40 @@ export default function ModelListItem({ name, versionArray, setRender, setDeploy
             alignItems: "center",
           }}
         >
-          <div style={{ flex: 3, marginLeft: "2.5%", color: "#808388" }}>
+          <div
+            style={{
+              flex: 3,
+              marginLeft: "2.5%",
+              color: "#808388",
+              color: "black",
+              fontWeight: "700",
+              fontSize: 18,
+            }}
+          >
             Version
           </div>
-          <p style={{ flex: 2, textAlign: "center", color: "#808388" }}>
+          <p
+            style={{
+              flex: 2,
+              textAlign: "center",
+              color: "#808388",
+              color: "black",
+              fontWeight: "700",
+              fontSize: 18,
+            }}
+          >
             Date added
           </p>
-          <p style={{ flex: 3, textAlign: "center", color: "#808388" }}>
+          <p
+            style={{
+              flex: 3,
+              textAlign: "center",
+              color: "#808388",
+              color: "black",
+              fontWeight: "700",
+              fontSize: 18,
+            }}
+          >
             Deploying
           </p>
         </div>

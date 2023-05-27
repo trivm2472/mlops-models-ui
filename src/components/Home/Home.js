@@ -8,11 +8,6 @@ import _ from "lodash";
 import JenkinsConfig from "../../jenkinsconfig/JenkinsConfig";
 import apiConfig from "../../apiConfig/apiConfig";
 
-axios.defaults.auth = {
-  username: JenkinsConfig.username,
-  password: JenkinsConfig.token,
-};
-
 export default function Home() {
   const [data, setData] = useState([]);
   const { value, setValue } = useContext(DeployModelContext);
@@ -20,6 +15,199 @@ export default function Home() {
   const [searchData, setSearchData] = useState([]);
   const [render, setRender] = useState(true);
   const [deployedData, setsetDeployedData] = useState([]);
+
+  const Popup = () => {
+    const [isOpen, setIsOpen] = useState(false);
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setErrorMessage] = useState(false);
+
+    const togglePopup = () => {
+      var arr1 = deployedData;
+      var arr2 = value;
+      arr1.sort((a, b) => a.id - b.id);
+      arr2.sort((a, b) => a.id - b.id);
+      var versionArr1 = [];
+      var versionArr2 = [];
+      for (let i = 0; i < arr1.length; i++) {
+        versionArr1.push(arr1[i].id);
+      }
+      for (let i = 0; i < arr2.length; i++) {
+        versionArr2.push(arr2[i].id);
+      }
+      if (versionArr1.length == 0) return;
+      if (_.isEqual(versionArr1, versionArr2)) {
+        alert("Those models have already been deploy");
+      } else setIsOpen(!isOpen);
+    };
+
+    async function handleSubmit(e) {
+      e.preventDefault();
+      try {
+        const loginResult = await axios.post(
+          `${apiConfig.vercelURL}/loginjenkins`,
+          {
+            username: username,
+            password: password,
+          }
+        );
+        console.log(loginResult.data.token);
+        if (loginResult.data) {
+          setUsername("");
+          setPassword("");
+          setIsOpen(false);
+          setErrorMessage(false);
+          // Login successfully
+
+          // Start jenkins session
+          axios.defaults.auth = {
+            username: username,
+            password: loginResult.data.token,
+          };
+          var arr1 = deployedData;
+          var arr2 = value;
+          arr1.sort((a, b) => a.id - b.id);
+          arr2.sort((a, b) => a.id - b.id);
+          var versionArr1 = [];
+          var versionArr2 = [];
+          for (let i = 0; i < arr1.length; i++) {
+            versionArr1.push(arr1[i].id);
+          }
+          for (let i = 0; i < arr2.length; i++) {
+            versionArr2.push(arr2[i].id);
+          }
+          if (versionArr1.length == 0) return;
+          if (_.isEqual(versionArr1, versionArr2)) {
+            alert("Those models have already been deploy");
+          } else if (1 == 2) {
+          } else {
+            try {
+              setDeployedData(deployedModel.data);
+              setValue(deployedModel.data);
+
+              // Jenkin api
+              var modelNameString = "";
+              var versionString = "";
+
+              if (deployedData.length == 1) {
+                modelNameString = deployedData[0].modelName;
+                versionString = deployedData[0].version;
+              } else {
+                modelNameString = deployedData[0].modelName;
+                versionString = deployedData[0].version;
+                for (let i = 1; i < deployedData.length; i++) {
+                  modelNameString += "," + deployedData[i].modelName;
+                  versionString += "," + deployedData[i].version;
+                }
+              }
+
+              console.log("modelNameString", modelNameString);
+              console.log("versionString", versionString);
+              // Check if image exist for model:
+              const images = await axios.post(
+                `${apiConfig.vercelURL}/deploy/getSaveImage`,
+                {
+                  versionList: versionString,
+                  modelListName: modelNameString,
+                }
+              );
+
+              console.log(images);
+
+              if (images.data.length > 0) {
+                const jenkinResponse1 = await axios.post(
+                  `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job}/job/main/buildWithParameters?
+                      MODEL_NAME=${modelNameString}&MODEL_VERSION=${versionString}&IMAGE_NAME=${images.data[0].image}dp`,
+                  {}
+                );
+                alert("Deploying image");
+                return;
+              }
+              const jenkinResponse2 = await axios.post(
+                `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job}/job/main/buildWithParameters?
+                    MODEL_NAME=${modelNameString}&MODEL_VERSION=${versionString}&IMAGE_NAME=imagename`,
+                {}
+              );
+              // End jenkins session
+              const response = await axios.post(
+                `${apiConfig.vercelURL}/deploy`,
+                {
+                  modelIdList: versionArr1,
+                }
+              );
+              const deployedModel = await axios(
+                `${apiConfig.vercelURL}/deployed`
+              );
+
+              alert("Models deploy successful");
+            } catch (error) {
+              console.error(error);
+              alert("Something went wrong");
+            }
+          }
+        } else {
+          // Incorrect username or password
+          setErrorMessage(true);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    return (
+      <div>
+        <button
+          onClick={togglePopup}
+          style={{
+            width: "100%",
+            marginTop: 30,
+            height: 45,
+            fontSize: 24,
+            borderRadius: 5,
+            borderWidth: 1.2,
+            fontWeight: "bold",
+            color: "white",
+            backgroundColor: "#4593C6",
+          }}
+        >
+          Deploy
+        </button>
+        {isOpen && (
+          <div className="popup-container">
+            <div className="popup">
+              <span className="close" onClick={togglePopup}>
+                &times;
+              </span>
+              <form onSubmit={handleSubmit}>
+                <label>
+                  Username:
+                  <input
+                    className="validation"
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    style={{ marginLeft: 15 }}
+                  />
+                </label>
+                <label>
+                  Password:
+                  <input
+                    className="validation"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    style={{ marginLeft: 20 }}
+                  />
+                </label>
+                <button type="submit">Submit</button>
+                {error && <p className="error">Invalid username or password</p>}
+              </form>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   function setDeployedData(data) {
     setsetDeployedData(data);
@@ -177,6 +365,19 @@ export default function Home() {
             className="model-deploy-table-content"
             style={{ borderStyle: "solid", minHeight: 100, paddingTop: 20 }}
           >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                fontWeight: "bold",
+                fontSize: 20,
+                paddingLeft: 30,
+                marginBottom: 20,
+              }}
+            >
+              <div style={{ flexBasis: "65%", color: '#6D6F6F', fontWeight: '700' }}>Model name</div>
+              <div style={{ flexBasis: "35%", color: '#6D6F6F', fontWeight: '700' }}>Version</div>
+            </div>
             {deployedData.map((item, key) => {
               return (
                 <div
@@ -190,13 +391,13 @@ export default function Home() {
                   }}
                   key={key}
                 >
-                  <div style={{ flexBasis: "65%" }}>- {item.modelName}</div>
+                  <div style={{ flexBasis: "65%" }}>{item.modelName}</div>
                   <div style={{ flexBasis: "35%" }}>{item.version}</div>
                 </div>
               );
             })}
           </div>
-          <input
+          {/* <input
             className="deploy-button"
             type="button"
             value="Deploy"
@@ -257,7 +458,7 @@ export default function Home() {
                       versionString += "," + deployedData[i].version;
                     }
                   }
-                  
+
                   console.log("modelNameString", modelNameString);
                   console.log("versionString", versionString);
                   // Check if image exist for model:
@@ -271,7 +472,7 @@ export default function Home() {
 
                   console.log(images);
 
-                  if(images.data.length > 0) {
+                  if (images.data.length > 0) {
                     const jenkinResponse1 = await axios.post(
                       `${JenkinsConfig.jenkinsURL}/job/BUILD_BACKEND_IMAGE_MLOPS/job/main/buildWithParameters?
                       MODEL_NAME=${modelNameString}&MODEL_VERSION=${versionString}&IMAGE_NAME=${images.data[0].image}dp`,
@@ -293,7 +494,8 @@ export default function Home() {
                 }
               }
             }}
-          />
+          /> */}
+          <Popup />
         </div>
       </div>
       <div style={{ marginBottom: 100 }}></div>
