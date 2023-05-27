@@ -116,15 +116,15 @@ export default function Home() {
 
               if (images.data.length > 0) {
                 const jenkinResponse1 = await axios.post(
-                  `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job}/job/main/buildWithParameters?
-                      MODEL_NAME=${modelNameString}&MODEL_VERSION=${versionString}&IMAGE_NAME=${images.data[0].image}dp`,
+                  `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job2}/job/main/buildWithParameters?
+                      IMAGE_NAME=${images.data[0].image}dp`,
                   {}
                 );
                 alert("Deploying image");
                 return;
               }
               const jenkinResponse2 = await axios.post(
-                `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job}/job/main/buildWithParameters?
+                `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job}/buildWithParameters?
                     MODEL_NAME=${modelNameString}&MODEL_VERSION=${versionString}&IMAGE_NAME=imagename`,
                 {}
               );
@@ -375,8 +375,24 @@ export default function Home() {
                 marginBottom: 20,
               }}
             >
-              <div style={{ flexBasis: "65%", color: '#6D6F6F', fontWeight: '700' }}>Model name</div>
-              <div style={{ flexBasis: "35%", color: '#6D6F6F', fontWeight: '700' }}>Version</div>
+              <div
+                style={{
+                  flexBasis: "65%",
+                  color: "#6D6F6F",
+                  fontWeight: "700",
+                }}
+              >
+                Model name
+              </div>
+              <div
+                style={{
+                  flexBasis: "35%",
+                  color: "#6D6F6F",
+                  fontWeight: "700",
+                }}
+              >
+                Version
+              </div>
             </div>
             {deployedData.map((item, key) => {
               return (
