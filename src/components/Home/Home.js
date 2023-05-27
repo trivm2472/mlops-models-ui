@@ -122,6 +122,12 @@ export default function Home() {
                   `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job2}/job/main/buildWithParameters?IMAGE_NAME=${images.data[0].image}dp`,
                   {}
                 );
+                const response = await axios.post(
+                  `${apiConfig.vercelURL}/deploy`,
+                  {
+                    modelIdList: versionArr1,
+                  }
+                );
                 alert("Deploying image");
                 return;
               }
