@@ -117,10 +117,10 @@ export default function Home() {
               console.log(images);
 
               if (images.data.length > 0) {
-                const jenkinResponse1 = await axios.post(
-                  `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job2}/job/main/buildWithParameters?IMAGE_NAME=${images.data[0].image}dp`,
-                  {}
-                );
+                // const jenkinResponse1 = await axios.post(
+                //   `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job2}/job/main/buildWithParameters?IMAGE_NAME=${images.data[0].image}dp`,
+                //   {}
+                // );
                 const response = await axios.post(
                   `${apiConfig.vercelURL}/deploy`,
                   {
@@ -138,10 +138,10 @@ export default function Home() {
                 return;
               }
               const seqImage = await axios.get(`${apiConfig.vercelURL}/addImageSeq`)
-              const jenkinResponse2 = await axios.post(
-                `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job}/buildWithParameters?MODEL_NAME=${modelNameString}&MODEL_VERSION=${versionString}&IMAGE_NAME=deployedImage${seqImage.data}`,
-                {}
-              );
+              // const jenkinResponse2 = await axios.post(
+              //   `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job}/buildWithParameters?MODEL_NAME=${modelNameString}&MODEL_VERSION=${versionString}&IMAGE_NAME=deployedImage${seqImage.data}`,
+              //   {}
+              // );
               // End jenkins session
               const response = await axios.post(
                 `${apiConfig.vercelURL}/deploy`,
