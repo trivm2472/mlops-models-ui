@@ -7,7 +7,7 @@ import { DeployModelContext } from "../../useContext/DeployModelContext";
 import _ from "lodash";
 import JenkinsConfig from "../../jenkinsconfig/JenkinsConfig";
 import apiConfig from "../../apiConfig/apiConfig";
-import io from 'socket.io-client';
+
 
 
 
@@ -248,18 +248,6 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const socket = io(`${apiConfig.vercelURL}`);
-    socket.on('deployResult', (data) => {
-      console.log('Received message from server:', data);
-      if(data == 'success') {
-        alert('Deploy successful');
-        setIsDeployed(false);
-      } else {
-        alert('Deploy failed');
-        setIsDeployed(false);
-      }
-      fetchData();
-    });
     const fetchData = async () => {
       const result = await axios(`${apiConfig.vercelURL}`);
       setData(result.data);
@@ -276,9 +264,6 @@ export default function Home() {
       }
     };
     fetchData();
-    return () => {
-      socket.disconnect();
-    };
   }, []);
 
   return (
