@@ -67,3 +67,7 @@ button:hover {
   color: red;
   font-size: 14px;
 }
+
+.deploy-button:hover {
+  cursor: no-drop;
+}

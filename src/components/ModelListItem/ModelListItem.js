@@ -11,7 +11,9 @@ export default function ModelListItem({
   setRender,
   setDeployedData,
   deployedData,
+  isDeployed
 }) {
+  
   const [checkedModelId, setCheckedModelId] = useState(-1);
   function VersionItem({ versionId, date, modelId, modelName }) {
     function checkDeployed() {
@@ -88,7 +90,7 @@ export default function ModelListItem({
           checked={isChecked}
           onChange={handleCheckboxChange}
           style={{ flex: 3 }}
-          disabled={checkDisabled() ? true : false}
+          disabled={checkDisabled() || isDeployed ? true : false}
         />
       </div>
     );

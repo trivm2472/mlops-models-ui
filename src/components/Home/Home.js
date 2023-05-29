@@ -7,6 +7,9 @@ import { DeployModelContext } from "../../useContext/DeployModelContext";
 import _ from "lodash";
 import JenkinsConfig from "../../jenkinsconfig/JenkinsConfig";
 import apiConfig from "../../apiConfig/apiConfig";
+import io from 'socket.io-client';
+
+
 
 export default function Home() {
   const [data, setData] = useState([]);
@@ -15,6 +18,7 @@ export default function Home() {
   const [searchData, setSearchData] = useState([]);
   const [render, setRender] = useState(true);
   const [deployedData, setsetDeployedData] = useState([]);
+  const [isDeployed, setIsDeployed] = useState(false);
 
   const Popup = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -82,11 +86,6 @@ export default function Home() {
           } else if (1 == 2) {
           } else {
             try {
-              const deployedModel = await axios(
-                `${apiConfig.vercelURL}/deployed`
-              );
-              setDeployedData(deployedModel.data);
-              setValue(deployedModel.data);
 
               // Jenkin api
               var modelNameString = "";
@@ -128,6 +127,13 @@ export default function Home() {
                     modelIdList: versionArr1,
                   }
                 );
+                // const deployedModel = await axios(
+                //   `${apiConfig.vercelURL}/deployed`
+                // );
+                
+                // setDeployedData(deployedModel.data);
+                // setValue(deployedModel.data);
+                setIsDeployed(true);
                 alert("Deploying image");
                 return;
               }
@@ -143,9 +149,15 @@ export default function Home() {
                   modelIdList: versionArr1,
                 }
               );
+              // const deployedModel = await axios(
+              //   `${apiConfig.vercelURL}/deployed`
+              // );
               
+              // setDeployedData(deployedModel.data);
+              // setValue(deployedModel.data);
+              setIsDeployed(true);
 
-              alert("Models deploy successful");
+              alert("Deploying model");
             } catch (error) {
               console.error(error);
               alert("Something went wrong");
@@ -175,8 +187,10 @@ export default function Home() {
             color: "white",
             backgroundColor: "#4593C6",
           }}
+          disabled={isDeployed}
+          className={isDeployed ? "deploy-button" : ""}
         >
-          Deploy
+          {isDeployed ? 'Deploying...' : 'Deploy'}
         </button>
         {isOpen && (
           <div className="popup-container">
@@ -234,15 +248,37 @@ export default function Home() {
   };
 
   useEffect(() => {
+    const socket = io(`${apiConfig.vercelURL}`);
+    socket.on('deployResult', (data) => {
+      console.log('Received message from server:', data);
+      if(data == 'success') {
+        alert('Deploy successful');
+        setIsDeployed(false);
+      } else {
+        alert('Deploy failed');
+        setIsDeployed(false);
+      }
+      fetchData();
+    });
     const fetchData = async () => {
       const result = await axios(`${apiConfig.vercelURL}`);
       setData(result.data);
       setSearchData(result.data);
       const deployedResult = await axios(`${apiConfig.vercelURL}/deployed`);
-      setDeployedData(deployedResult.data);
+      const deployStatus = await axios.get(`${apiConfig.vercelURL}/deployStatus`);
+      if (deployStatus.data.status != 'idle') {
+        setIsDeployed(true);
+        const temp = await axios.post(`${apiConfig.vercelURL}/getModelList`, {arrayId: deployStatus.data.currentIdList});
+        setsetDeployedData(temp.data);
+      } else {
+        setDeployedData(deployedResult.data);
+        setValue(deployedResult.data) // Dangerous
+      }
     };
-
     fetchData();
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   return (
@@ -345,6 +381,7 @@ export default function Home() {
                   setRender={setRender}
                   setDeployedData={setDeployedData}
                   deployedData={deployedData}
+                  isDeployed={isDeployed}
                 />
               );
             })
