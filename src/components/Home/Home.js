@@ -12,6 +12,8 @@ import apiConfig from "../../apiConfig/apiConfig";
 
 
 export default function Home() {
+  const jenkinsUrl = ['https://jenkins.mlopshcmut.ngrok.app/job/MLOPS_BUILD_AND_DEPLOY_BACKEND/', 
+  'https://jenkins.mlopshcmut.ngrok.app/job/MLOPS_DEPLOY/job/main/'];
   const [data, setData] = useState([]);
   const { value, setValue } = useContext(DeployModelContext);
   const [searchValue, setSearchValue] = useState("");
@@ -19,7 +21,8 @@ export default function Home() {
   const [render, setRender] = useState(true);
   const [deployedData, setsetDeployedData] = useState([]);
   const [isDeployed, setIsDeployed] = useState(false);
-
+  const [monitorUrl, setMonitorUrl] = useState(jenkinsUrl[0]);
+  
   const Popup = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [username, setUsername] = useState("");
@@ -117,14 +120,15 @@ export default function Home() {
               console.log(images);
 
               if (images.data.length > 0) {
-                const jenkinResponse1 = await axios.post(
-                  `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job2}/job/main/buildWithParameters?IMAGE_NAME=${images.data[0].image}dp`,
-                  {}
-                );
+                // const jenkinResponse1 = await axios.post(
+                //   `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job2}/job/main/buildWithParameters?IMAGE_NAME=${images.data[0].image}`,
+                //   {}
+                // );
                 const response = await axios.post(
                   `${apiConfig.vercelURL}/deploy`,
                   {
                     modelIdList: versionArr1,
+                    urlLink: jenkinsUrl[1],
                   }
                 );
                 // const deployedModel = await axios(
@@ -134,19 +138,21 @@ export default function Home() {
                 // setDeployedData(deployedModel.data);
                 // setValue(deployedModel.data);
                 setIsDeployed(true);
+                setMonitorUrl(jenkinsUrl[1])
                 alert("Deploying image");
                 return;
               }
               const seqImage = await axios.get(`${apiConfig.vercelURL}/addImageSeq`)
-              const jenkinResponse2 = await axios.post(
-                `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job}/buildWithParameters?MODEL_NAME=${modelNameString}&MODEL_VERSION=${versionString}&IMAGE_NAME=deployedImage${seqImage.data}`,
-                {}
-              );
+              // const jenkinResponse2 = await axios.post(
+              //   `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job}/buildWithParameters?MODEL_NAME=${modelNameString}&MODEL_VERSION=${versionString}&IMAGE_NAME=deployedImage${seqImage.data}`,
+              //   {}
+              // );
               // End jenkins session
               const response = await axios.post(
                 `${apiConfig.vercelURL}/deploy`,
                 {
                   modelIdList: versionArr1,
+                  urlLink: jenkinsUrl[0],
                 }
               );
               // const deployedModel = await axios(
@@ -155,6 +161,7 @@ export default function Home() {
               
               // setDeployedData(deployedModel.data);
               // setValue(deployedModel.data);
+              setMonitorUrl(jenkinsUrl[0])
               setIsDeployed(true);
 
               alert("Deploying model");
@@ -254,6 +261,7 @@ export default function Home() {
       setSearchData(result.data);
       const deployedResult = await axios(`${apiConfig.vercelURL}/deployed`);
       const deployStatus = await axios.get(`${apiConfig.vercelURL}/deployStatus`);
+      setMonitorUrl(deployStatus.data.urlLink);
       if (deployStatus.data.status != 'idle') {
         setIsDeployed(true);
         const temp = await axios.post(`${apiConfig.vercelURL}/getModelList`, {arrayId: deployStatus.data.currentIdList});
@@ -540,6 +548,11 @@ export default function Home() {
             }}
           /> */}
           <Popup />
+          <div style={{display: isDeployed ? '' : 'none', marginTop: 20}}>
+            <a href={monitorUrl} target="_blank" id="monitor-link" style={{fontSize: 20}} >
+              Click here to monitor deployment
+            </a>
+          </div>
         </div>
       </div>
       <div style={{ marginBottom: 100 }}></div>

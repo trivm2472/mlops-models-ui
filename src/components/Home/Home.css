@@ -71,3 +71,13 @@ button:hover {
 .deploy-button:hover {
   cursor: no-drop;
 }
+
+#monitor-link {
+  text-decoration: none;
+  font-size: 24;
+  color: '#007bff'
+}
+
+a.clicked {
+  color: '#007bff'
+}
