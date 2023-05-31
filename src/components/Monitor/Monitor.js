@@ -23,11 +23,14 @@ export default function Monitor() {
             className: temp[j] ? temp[j].className : "null",
             class: temp[j] ? temp[j].class : "null",
             confidence: temp[j] ? temp[j].confidence : "null",
+            date: temp[j] ? temp[j].date ? temp[j].date : 'null' : 'null',
+            response_time: temp[j] ? temp[j].response_time ? temp[j].response_time : 'null' : 'null',
           }
           result2.push(element);
         }
       }
       console.log(result2);
+      result2 = result2.slice().reverse()
       setData(result2);
     };
 
@@ -109,7 +112,8 @@ export default function Monitor() {
               <th style={{ width: "15%" }}>Version</th>
               <th style={{ width: "15%" }}>Date</th>
               <th style={{ width: "11%" }}>Class</th>
-              <th style={{ width: "42%" }}>Class Name</th>
+              <th style={{ width: "21%" }}>Class Name</th>
+              <th style={{ width: "21%" }}>Response time</th>
               <th style={{ width: "17%" }}>Conf</th>
             </tr>
           </thead>
@@ -124,6 +128,7 @@ export default function Monitor() {
                 <td>{item.class}</td>
                 {/* <td>{item.monitorResult.className}</td> */}
                 <td>{item.className ? item.className : 'null'}</td>
+                <td>{item.response_time ? item.response_time : 'null'}</td>
                 <td>{item.confidence}</td>
               </tr>
             ))}
