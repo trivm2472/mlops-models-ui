@@ -18,6 +18,7 @@ export default function Model() {
   const [rotation, setRotation] = useState(-90);
   const [trainResultrotation, setTrainResultRotation] = useState(-90);
   const [parameterrotation, setParameterRotation] = useState(-90);
+  const [trainResult, setTrainResult] = useState([]);
 
   const handleClick = () => {
     if (rotation == -90) {
@@ -46,8 +47,17 @@ export default function Model() {
   useEffect(() => {
     const fetchData = async () => {
       const result = await axios(`${apiConfig.vercelURL}/model/${id}`);
+      console.log(result.data[0].outputFile.train_result);
       result.data[0].resultFile = JSON.parse(result.data[0].resultFile);
+      result.data[0].outputFile.train_result = Object.keys(
+        result.data[0].outputFile.train_result
+      ).map((key) => {
+        result.data[0].outputFile.train_result[key].Name = key;
+        return result.data[0].outputFile.train_result[key];
+      });
+      console.log(result.data[0].outputFile.train_result);
       setData(result.data[0]);
+      setTrainResult(result.data[0].outputFile.train_result);
     };
 
     fetchData();
@@ -63,8 +73,8 @@ export default function Model() {
           borderColor: "black",
           backgroundColor: "#4593C6",
           justifyContent: "center",
-          alignItems: 'center',
-          position: 'relative',
+          alignItems: "center",
+          position: "relative",
         }}
       >
         <div
@@ -74,7 +84,7 @@ export default function Model() {
             fontWeight: 700,
             color: "#FFFFFF",
             paddingBottom: 10,
-            textAlign: 'center',
+            textAlign: "center",
           }}
         >
           MLops models tracking UI
@@ -84,10 +94,10 @@ export default function Model() {
           style={{
             width: 60,
             height: 60,
-            textAlign: 'right',
+            textAlign: "right",
             marginTop: 5,
             marginRight: 30,
-            position: 'absolute',
+            position: "absolute",
             top: 0,
             right: 0,
           }}
@@ -227,97 +237,44 @@ export default function Model() {
             <h2 style={{ color: "#212A3E" }}>Train result:</h2>
           </div>
           <div style={{ display: trainResultOpen ? "" : "none" }}>
-            <span
-              style={{
-                display: "flex",
-                alignItems: "baseline",
-                marginTop: -5,
-                marginLeft: 20,
-              }}
-            >
-              <h3 style={{ flexBasis: "25%" }}>- lr0:</h3>
-              <h3 style={{ flexBasis: "75%" }}>
-                {data.resultFile ? data.resultFile.hyp.lr0 : ""}
-              </h3>
-            </span>
-            <span
-              style={{
-                display: "flex",
-                alignItems: "baseline",
-                marginTop: -5,
-                marginLeft: 20,
-              }}
-            >
-              <h3 style={{ flexBasis: "25%" }}>- lrf:</h3>
-              <h3 style={{ flexBasis: "75%" }}>
-                {data.resultFile ? data.resultFile.hyp.lrf : ""}
-              </h3>
-            </span>
-            <span
-              style={{
-                display: "flex",
-                alignItems: "baseline",
-                marginTop: -5,
-                marginLeft: 20,
-              }}
-            >
-              <h3 style={{ flexBasis: "25%" }}>- momentum:</h3>
-              <h3 style={{ flexBasis: "75%" }}>
-                {data.resultFile ? data.resultFile.hyp.momentum : ""}
-              </h3>
-            </span>
-            <span
-              style={{
-                display: "flex",
-                alignItems: "baseline",
-                marginTop: -5,
-                marginLeft: 20,
-              }}
-            >
-              <h3 style={{ flexBasis: "25%" }}>- weight_decay:</h3>
-              <h3 style={{ flexBasis: "75%" }}>
-                {data.resultFile ? data.resultFile.hyp.weight_decay : ""}
-              </h3>
-            </span>
-            <span
-              style={{
-                display: "flex",
-                alignItems: "baseline",
-                marginTop: -5,
-                marginLeft: 20,
-              }}
-            >
-              <h3 style={{ flexBasis: "25%" }}>- warmup_epochs:</h3>
-              <h3 style={{ flexBasis: "75%" }}>
-                {data.resultFile ? data.resultFile.hyp.warmup_epochs : ""}
-              </h3>
-            </span>
-            <span
-              style={{
-                display: "flex",
-                alignItems: "baseline",
-                marginTop: -5,
-                marginLeft: 20,
-              }}
-            >
-              <h3 style={{ flexBasis: "25%" }}>- warmup_momentum:</h3>
-              <h3 style={{ flexBasis: "75%" }}>
-                {data.resultFile ? data.resultFile.hyp.warmup_momentum : ""}
-              </h3>
-            </span>
-            <span
-              style={{
-                display: "flex",
-                alignItems: "baseline",
-                marginTop: -5,
-                marginLeft: 20,
-              }}
-            >
-              <h3 style={{ flexBasis: "25%" }}>- warmup_bias_lr:</h3>
-              <h3 style={{ flexBasis: "75%" }}>
-                {data.resultFile ? data.resultFile.hyp.warmup_bias_lr : ""}
-              </h3>
-            </span>
+            {/* Train result here */}
+            {trainResult.length == 0 ? (
+              <div></div>
+            ) : (
+              <table
+                className="my-table"
+                style={{ marginTop: 20, width: "110%", marginLeft: "5%" }}
+              >
+                <thead>
+                  <tr>
+                    <th style={{ width: "10%" }}>Name</th>
+                    <th style={{ width: "10%" }}>Images</th>
+                    <th style={{ width: "11%" }}>Instances</th>
+                    <th style={{ width: "18%" }}>P</th>
+                    <th style={{ width: "18%" }}>R</th>
+                    <th style={{ width: "17%" }}>mAP50</th>
+                    <th style={{ width: "16%" }}>mAP50-95</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {trainResult.map((item, index) => (
+                    <tr
+                      className={index % 2 === 0 ? "blue-row" : "red-row"}
+                      key={index}
+                    >
+                      <td>{item.Name ? item.Name : "null"}</td>
+                      <td>{item["Images  "] ? item["Images  "] : "null"}</td>
+                      <td>{item.Instances ? item.Instances : "null"}</td>
+                      {/* <td>{item.monitorResult.className}</td> */}
+                      <td>{parseFloat(item.P.toFixed(15)).toString().replace(/(\.[0-9]*[1-9])0+$/, "$1")}</td>
+                      <td>{parseFloat(item.R.toFixed(15)).toString().replace(/(\.[0-9]*[1-9])0+$/, "$1")}</td>
+                      <td>{parseFloat(item.mAP50.toFixed(15)).toString().replace(/(\.[0-9]*[1-9])0+$/, "$1")}</td>
+                      <td>{parseFloat(item["mAP50-95"].toFixed(15)).toString().replace(/(\.[0-9]*[1-9])0+$/, "$1")}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
           <div
             className="header"
@@ -345,7 +302,7 @@ export default function Model() {
               }}
             />
             <div style={{ fontSize: 24, fontWeight: 700, color: "#212A3E" }}>
-              Advanced result:
+              Advanced parameter:
             </div>
           </div>
           <div style={{ display: open ? "" : "none" }}>

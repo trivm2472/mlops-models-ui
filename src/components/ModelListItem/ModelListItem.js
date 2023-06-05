@@ -150,9 +150,27 @@ export default function ModelListItem({
         <input
           className="monitor-button"
           type="button"
+          value="Train"
+          style={{
+            marginRight: 20,
+            fontSize: 24,
+            paddingLeft: 16,
+            paddingRight: 16,
+            borderRadius: 5,
+            backgroundColor: "#D9D9D9",
+            borderWidth: 1.2,
+          }}
+          onClick={() => {
+            
+            navigate(`/train/${name}`);
+          }}
+        />
+        <input
+          className="monitor-button"
+          type="button"
           value="Monitor"
           style={{
-            marginRight: 60,
+            marginRight: 20,
             fontSize: 24,
             paddingLeft: 16,
             paddingRight: 16,

@@ -7,13 +7,14 @@ import { DeployModelContext } from "../../useContext/DeployModelContext";
 import _ from "lodash";
 import JenkinsConfig from "../../jenkinsconfig/JenkinsConfig";
 import apiConfig from "../../apiConfig/apiConfig";
-
-
-
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Home() {
-  const jenkinsUrl = ['https://jenkins.mlopshcmut.ngrok.app/job/MLOPS_BUILD_AND_DEPLOY_BACKEND/', 
-  'https://jenkins.mlopshcmut.ngrok.app/job/MLOPS_DEPLOY/job/main/'];
+  const jenkinsUrl = [
+    "https://jenkins.mlopshcmut.ngrok.app/job/MLOPS_BUILD_AND_DEPLOY_BACKEND/",
+    "https://jenkins.mlopshcmut.ngrok.app/job/MLOPS_DEPLOY/job/main/",
+  ];
+  const navigate = useNavigate();
   const [data, setData] = useState([]);
   const { value, setValue } = useContext(DeployModelContext);
   const [searchValue, setSearchValue] = useState("");
@@ -22,7 +23,7 @@ export default function Home() {
   const [deployedData, setsetDeployedData] = useState([]);
   const [isDeployed, setIsDeployed] = useState(false);
   const [monitorUrl, setMonitorUrl] = useState(jenkinsUrl[0]);
-  
+
   const Popup = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [username, setUsername] = useState("");
@@ -89,7 +90,6 @@ export default function Home() {
           } else if (1 == 2) {
           } else {
             try {
-
               // Jenkin api
               var modelNameString = "";
               var versionString = "";
@@ -134,15 +134,17 @@ export default function Home() {
                 // const deployedModel = await axios(
                 //   `${apiConfig.vercelURL}/deployed`
                 // );
-                
+
                 // setDeployedData(deployedModel.data);
                 // setValue(deployedModel.data);
                 setIsDeployed(true);
-                setMonitorUrl(jenkinsUrl[1])
+                setMonitorUrl(jenkinsUrl[1]);
                 alert("Deploying image");
                 return;
               }
-              const seqImage = await axios.get(`${apiConfig.vercelURL}/addImageSeq`)
+              const seqImage = await axios.get(
+                `${apiConfig.vercelURL}/addImageSeq`
+              );
               const jenkinResponse2 = await axios.post(
                 `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.job}/buildWithParameters?MODEL_NAME=${modelNameString}&MODEL_VERSION=${versionString}&IMAGE_NAME=deployedImage${seqImage.data}`,
                 {}
@@ -158,10 +160,10 @@ export default function Home() {
               // const deployedModel = await axios(
               //   `${apiConfig.vercelURL}/deployed`
               // );
-              
+
               // setDeployedData(deployedModel.data);
               // setValue(deployedModel.data);
-              setMonitorUrl(jenkinsUrl[0])
+              setMonitorUrl(jenkinsUrl[0]);
               setIsDeployed(true);
 
               alert("Deploying model");
@@ -197,7 +199,7 @@ export default function Home() {
           disabled={isDeployed}
           className={isDeployed ? "deploy-button" : ""}
         >
-          {isDeployed ? 'Deploying...' : 'Deploy'}
+          {isDeployed ? "Deploying..." : "Deploy"}
         </button>
         {isOpen && (
           <div className="popup-container">
@@ -260,15 +262,19 @@ export default function Home() {
       setData(result.data);
       setSearchData(result.data);
       const deployedResult = await axios(`${apiConfig.vercelURL}/deployed`);
-      const deployStatus = await axios.get(`${apiConfig.vercelURL}/deployStatus`);
+      const deployStatus = await axios.get(
+        `${apiConfig.vercelURL}/deployStatus`
+      );
       setMonitorUrl(deployStatus.data.urlLink);
-      if (deployStatus.data.status != 'idle') {
+      if (deployStatus.data.status != "idle") {
         setIsDeployed(true);
-        const temp = await axios.post(`${apiConfig.vercelURL}/getModelList`, {arrayId: deployStatus.data.currentIdList});
+        const temp = await axios.post(`${apiConfig.vercelURL}/getModelList`, {
+          arrayId: deployStatus.data.currentIdList,
+        });
         setsetDeployedData(temp.data);
       } else {
         setDeployedData(deployedResult.data);
-        setValue(deployedResult.data) // Dangerous
+        setValue(deployedResult.data); // Dangerous
       }
     };
     fetchData();
@@ -346,6 +352,24 @@ export default function Home() {
           onClick={handleClick}
         />
       </div>
+      <button
+        style={{
+          marginTop: 45,
+          marginBottom: -10,
+          marginLeft: '10%',
+          width: 200,
+          height: 45,
+          fontSize: 24,
+          borderRadius: 5,
+          borderWidth: 1.2,
+          fontWeight: "bold",
+          color: "white",
+          backgroundColor: "#4593C6",
+        }}
+        onClick={() => {navigate('/train/0')}}
+      >
+        + New model
+      </button>
       <div
         className="home-content"
         style={{ display: "flex", flexDirection: "row", marginTop: 30 }}
@@ -449,107 +473,14 @@ export default function Home() {
               );
             })}
           </div>
-          {/* <input
-            className="deploy-button"
-            type="button"
-            value="Deploy"
-            style={{
-              width: "100%",
-              marginTop: 30,
-              height: 45,
-              fontSize: 24,
-              borderRadius: 5,
-              borderWidth: 1.2,
-              fontWeight: "bold",
-              color: "white",
-              backgroundColor: "#4593C6",
-            }}
-            onClick={async () => {
-              var arr1 = deployedData;
-              var arr2 = value;
-              arr1.sort((a, b) => a.id - b.id);
-              arr2.sort((a, b) => a.id - b.id);
-              var versionArr1 = [];
-              var versionArr2 = [];
-              for (let i = 0; i < arr1.length; i++) {
-                versionArr1.push(arr1[i].id);
-              }
-              for (let i = 0; i < arr2.length; i++) {
-                versionArr2.push(arr2[i].id);
-              }
-              if (versionArr1.length == 0) return;
-              if (_.isEqual(versionArr1, versionArr2)) {
-                alert("Those models have already been deploy");
-              } else if (1 == 2) {
-              } else {
-                try {
-                  const response = await axios.post(
-                    `${apiConfig.vercelURL}/deploy`,
-                    {
-                      modelIdList: versionArr1,
-                    }
-                  );
-                  const deployedModel = await axios(
-                    `${apiConfig.vercelURL}/deployed`
-                  );
-                  setDeployedData(deployedModel.data);
-                  setValue(deployedModel.data);
-
-                  // Jenkin api
-                  var modelNameString = "";
-                  var versionString = "";
-
-                  if (deployedData.length == 1) {
-                    modelNameString = deployedData[0].modelName;
-                    versionString = deployedData[0].version;
-                  } else {
-                    modelNameString = deployedData[0].modelName;
-                    versionString = deployedData[0].version;
-                    for (let i = 1; i < deployedData.length; i++) {
-                      modelNameString += "," + deployedData[i].modelName;
-                      versionString += "," + deployedData[i].version;
-                    }
-                  }
-
-                  console.log("modelNameString", modelNameString);
-                  console.log("versionString", versionString);
-                  // Check if image exist for model:
-                  const images = await axios.post(
-                    `${apiConfig.vercelURL}/deploy/getSaveImage`,
-                    {
-                      versionList: versionString,
-                      modelListName: modelNameString,
-                    }
-                  );
-
-                  console.log(images);
-
-                  if (images.data.length > 0) {
-                    const jenkinResponse1 = await axios.post(
-                      `${JenkinsConfig.jenkinsURL}/job/BUILD_BACKEND_IMAGE_MLOPS/job/main/buildWithParameters?
-                      MODEL_NAME=${modelNameString}&MODEL_VERSION=${versionString}&IMAGE_NAME=${images.data[0].image}dp`,
-                      {}
-                    );
-                    alert("deploying image");
-                    return;
-                  }
-                  const jenkinResponse2 = await axios.post(
-                    `${JenkinsConfig.jenkinsURL}/job/BUILD_BACKEND_IMAGE_MLOPS/job/main/buildWithParameters?
-                    MODEL_NAME=${modelNameString}&MODEL_VERSION=${versionString}&IMAGE_NAME=imagename`,
-                    {}
-                  );
-                  // End jenkin api
-
-                  alert("models deploy successful");
-                } catch (error) {
-                  console.error(error);
-                }
-              }
-            }}
-          /> */}
           <Popup />
-          <div style={{display: isDeployed ? '' : 'none', marginTop: 20}}>
-            <a href={monitorUrl} target="_blank" id="monitor-link" style={{fontSize: 20}} >
+          <div style={{ display: isDeployed ? "" : "none", marginTop: 20 }}>
+            <a
+              href={monitorUrl}
+              target="_blank"
+              id="monitor-link"
+              style={{ fontSize: 20 }}
+            >
               Click here to monitor deployment
             </a>
           </div>
