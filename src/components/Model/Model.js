@@ -47,7 +47,8 @@ export default function Model() {
   useEffect(() => {
     const fetchData = async () => {
       const result = await axios(`${apiConfig.vercelURL}/model/${id}`);
-      console.log(result.data[0].outputFile.train_result);
+      console.log(result.data[0]);
+      setData(result.data[0]);
       result.data[0].resultFile = JSON.parse(result.data[0].resultFile);
       result.data[0].outputFile.train_result = Object.keys(
         result.data[0].outputFile.train_result
@@ -55,7 +56,7 @@ export default function Model() {
         result.data[0].outputFile.train_result[key].Name = key;
         return result.data[0].outputFile.train_result[key];
       });
-      console.log(result.data[0].outputFile.train_result);
+      
       setData(result.data[0]);
       setTrainResult(result.data[0].outputFile.train_result);
     };
