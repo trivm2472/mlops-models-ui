@@ -303,7 +303,7 @@ export default function Home() {
           paddingBottom: 10,
         }}
       >
-        MLOps models tracking UI
+        MLOps models monitoring UI
       </div>
       <div
         style={{

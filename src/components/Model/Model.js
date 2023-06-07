@@ -88,7 +88,7 @@ export default function Model() {
             textAlign: "center",
           }}
         >
-          MLops models tracking UI
+          MLops models monitoring UI
         </div>
         <img
           src={homeIcons}
