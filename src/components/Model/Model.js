@@ -163,7 +163,7 @@ export default function Model() {
               }}
             >
               <h3 style={{ marginRight: 50 }}>- img:</h3>
-              <h3>{data ? data.img : ""}</h3>
+              <h3>{data ? data.img : "null"}</h3>
             </span>
             <span
               style={{
@@ -174,7 +174,7 @@ export default function Model() {
               }}
             >
               <h3 style={{ marginRight: 35 }}>- batch:</h3>
-              <h3>{data ? data.batch : ""}</h3>
+              <h3>{data ? data.batch : "null"}</h3>
             </span>
             <span
               style={{
@@ -185,7 +185,7 @@ export default function Model() {
               }}
             >
               <h3 style={{ marginRight: 22 }}>- epochs:</h3>
-              <h3>{data ? data.epochs : ""}</h3>
+              <h3>{data ? data.epochs : "null"}</h3>
             </span>
             <span
               style={{
