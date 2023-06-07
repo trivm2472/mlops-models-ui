@@ -1,4 +1,3 @@
-import ModelListItem from "../ModelListItem/ModelListItem";
 import { useEffect } from "react";
 import axios from "axios";
 import { useState, useContext } from "react";
@@ -59,10 +58,12 @@ export default function TrainModel() {
           };
           
           // jenkins api here
-          const jenkinResponse = await axios.post(
-            `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.trainJob}/job/main/buildWithParameters?MODEL_NAME=${modelName}&DATA_URL=${dataUrl}&IMG=${img}&BATCH=${batch}&EPOCH=${epoch}&WEIGHT=${weight}`,
-            {}
-          );
+          // const jenkinResponse = await axios.post(
+          //   `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.trainJob}/job/main/buildWithParameters?MODEL_NAME=${modelName}&DATA_URL=${dataUrl}&IMG=${img}&BATCH=${batch}&EPOCH=${epoch}&WEIGHT=${weight}`,
+          //   {}
+          // );
+
+          const apiResponse = await axios.get(`${apiConfig.vercelURL}/train/${modelName}`)
           setIsOpen(!isOpen);
           alert('Build request has been sent');
           navigate('/');

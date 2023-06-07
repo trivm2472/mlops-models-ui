@@ -8,6 +8,7 @@ import _ from "lodash";
 import JenkinsConfig from "../../jenkinsconfig/JenkinsConfig";
 import apiConfig from "../../apiConfig/apiConfig";
 import { Link, useNavigate } from "react-router-dom";
+import closeIcon from "../../images/close.png";
 
 export default function Home() {
   const jenkinsUrl = [
@@ -23,6 +24,8 @@ export default function Home() {
   const [deployedData, setsetDeployedData] = useState([]);
   const [isDeployed, setIsDeployed] = useState(false);
   const [monitorUrl, setMonitorUrl] = useState(jenkinsUrl[0]);
+  const [keyToogle, setKeyToogle] = useState(false);
+  const [trainingModel, setTrainingModel] = useState([]);
 
   const Popup = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -266,6 +269,9 @@ export default function Home() {
         `${apiConfig.vercelURL}/deployStatus`
       );
       setMonitorUrl(deployStatus.data.urlLink);
+      const training = await axios.get(`${apiConfig.vercelURL}/training`);
+      console.log("training result", training.data)
+      setTrainingModel(training.data);
       if (deployStatus.data.status != "idle") {
         setIsDeployed(true);
         const temp = await axios.post(`${apiConfig.vercelURL}/getModelList`, {
@@ -278,6 +284,7 @@ export default function Home() {
       }
     };
     fetchData();
+    setKeyToogle(!keyToogle);
   }, []);
 
   return (
@@ -356,7 +363,7 @@ export default function Home() {
         style={{
           marginTop: 45,
           marginBottom: -10,
-          marginLeft: '10%',
+          marginLeft: "10%",
           width: 200,
           height: 45,
           fontSize: 24,
@@ -366,7 +373,9 @@ export default function Home() {
           color: "white",
           backgroundColor: "#4593C6",
         }}
-        onClick={() => {navigate('/train/0')}}
+        onClick={() => {
+          navigate("/train/0");
+        }}
       >
         + New model
       </button>
@@ -393,12 +402,15 @@ export default function Home() {
               return (
                 <ModelListItem
                   name={item[0].modelName}
-                  key={key}
+                  key={`${key}-${keyToogle}`}
                   versionArray={item}
                   setRender={setRender}
                   setDeployedData={setDeployedData}
                   deployedData={deployedData}
                   isDeployed={isDeployed}
+                  keyToogle={keyToogle}
+                  setKeyToogle={setKeyToogle}
+                  trainingModel={trainingModel}
                 />
               );
             })
@@ -468,7 +480,19 @@ export default function Home() {
                   key={key}
                 >
                   <div style={{ flexBasis: "65%" }}>{item.modelName}</div>
-                  <div style={{ flexBasis: "35%" }}>{item.version}</div>
+                  <div style={{ flexBasis: "30%" }}>
+                    {item.version}
+                    <img
+                      src={closeIcon}
+                      style={{ width: 16, height: 16, marginLeft: 15 }}
+                      onClick={()=>{
+                        var temp = deployedData;
+                        temp = temp.filter((obj) => obj.id != item.id)
+                        setDeployedData(temp);
+                        setKeyToogle(!keyToogle);
+                      }}
+                    />
+                  </div>
                 </div>
               );
             })}

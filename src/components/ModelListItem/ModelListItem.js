@@ -4,6 +4,7 @@ import "./ModelListItem.css";
 import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { DeployModelContext } from "../../useContext/DeployModelContext";
+import apiConfig from "../../apiConfig/apiConfig";
 
 export default function ModelListItem({
   name,
@@ -11,9 +12,11 @@ export default function ModelListItem({
   setRender,
   setDeployedData,
   deployedData,
-  isDeployed
+  isDeployed,
+  keyToogle,
+  setKeyToogle,
+  trainingModel,
 }) {
-  
   const [checkedModelId, setCheckedModelId] = useState(-1);
   function VersionItem({ versionId, date, modelId, modelName }) {
     function checkDeployed() {
@@ -161,7 +164,6 @@ export default function ModelListItem({
             borderWidth: 1.2,
           }}
           onClick={() => {
-            
             navigate(`/train/${name}`);
           }}
         />
@@ -268,6 +270,20 @@ export default function ModelListItem({
           );
         })}
       </div>
+      {trainingModel.includes(name) ? (
+        <div style={{ marginTop: 8 }}>
+          <a
+            href={apiConfig.trainStatus}
+            target="_blank"
+            id="monitor-link"
+            style={{ fontSize: 16 }}
+          >
+            Model in training.... Click here to monitor
+          </a>
+        </div>
+      ) : (
+        ""
+      )}
     </div>
   );
 }
