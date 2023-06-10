@@ -58,16 +58,15 @@ export default function TrainModel() {
           };
           
           // jenkins api here
-          // const jenkinResponse = await axios.post(
-          //   `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.trainJob}/job/main/buildWithParameters?MODEL_NAME=${modelName}&DATA_URL=${dataUrl}&IMG=${img}&BATCH=${batch}&EPOCH=${epoch}&WEIGHT=${weight}`,
-          //   {}
-          // );
+          const jenkinResponse = await axios.post(
+            `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.trainJob}/job/main/buildWithParameters?MODEL_NAME=${modelName}&DATA_URL=${dataUrl}&IMG=${img}&BATCH=${batch}&EPOCH=${epoch}&WEIGHT=${weight}`,
+            {}
+          );
 
           const apiResponse = await axios.get(`${apiConfig.vercelURL}/train/${modelName}`)
           setIsOpen(!isOpen);
           alert('Build request has been sent');
           navigate('/');
-          
         } else {
           // Incorrect username or password
           setErrorMessage(true);
