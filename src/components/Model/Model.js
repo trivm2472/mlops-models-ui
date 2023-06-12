@@ -312,7 +312,7 @@ export default function Model() {
             </pre>
           </div>
           <h2 style={{ marginTop: 30 }}>
-            Last update: {data ? data.date : ""}
+            Update date: {data ? data.date : ""}
           </h2>
         </div>
         {/* <div style={{ flexBasis: "20%" }}>
