@@ -516,7 +516,7 @@ export default function Home() {
           <Popup />
           <div style={{ display: isDeployed ? "" : "none", marginTop: 20 }}>
             <a
-              href={monitorUrl}
+              href={apiConfig.trainStatus}
               target="_blank"
               id="monitor-link"
               style={{ fontSize: 20 }}
