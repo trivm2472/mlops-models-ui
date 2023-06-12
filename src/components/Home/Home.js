@@ -387,7 +387,7 @@ export default function Home() {
           + New model
         </button>
         <a
-          href={monitorUrl}
+          href={apiConfig.trainStatus}
           target="_blank"
           id="monitor-link"
           style={{ fontSize: 18 , marginLeft: '10%', marginTop: 10, display: trainingModel.length == 0 ? 'none' : ''}}
@@ -516,7 +516,7 @@ export default function Home() {
           <Popup />
           <div style={{ display: isDeployed ? "" : "none", marginTop: 20 }}>
             <a
-              href={apiConfig.trainStatus}
+              href={monitorUrl}
               target="_blank"
               id="monitor-link"
               style={{ fontSize: 20 }}
