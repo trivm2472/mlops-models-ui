@@ -1,6 +1,6 @@
 const apiConfig = {
   vercelURL: 'https://mlops-models-server-1gp6.vercel.app',
-  trainStatus: 'https://jenkins.mlopshcmut.ngrok.app/job/MLOPS_TRAINING_MODEL/'
+  trainStatus: 'https://jenkins.mlopshcmut.ngrok.app/job/MLOPS_TRAINING_MODEL/job/main/'
 }
 
 // const apiConfig = {
