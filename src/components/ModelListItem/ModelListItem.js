@@ -1,10 +1,13 @@
 import React from "react";
 import arrowicons from "../../images/arrowdown-black.png";
+import check from "../../images/check.png";
+import deleteButton from "../../images/delete-button.png";
 import "./ModelListItem.css";
 import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { DeployModelContext } from "../../useContext/DeployModelContext";
 import apiConfig from "../../apiConfig/apiConfig";
+import axios from "axios";
 
 export default function ModelListItem({
   name,
@@ -16,6 +19,7 @@ export default function ModelListItem({
   keyToogle,
   setKeyToogle,
   trainingModel,
+  lastTrainStatus
 }) {
   const [checkedModelId, setCheckedModelId] = useState(-1);
   function VersionItem({ versionId, date, modelId, modelName }) {
@@ -100,6 +104,7 @@ export default function ModelListItem({
   }
   const [open, setOpen] = useState(false);
   const [rotation, setRotation] = useState(90);
+  const [statusLast, setStatusLast] = useState(true);
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -109,6 +114,26 @@ export default function ModelListItem({
       setRotation(rotation + 90);
     }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      var result = await axios.get(`${apiConfig.vercelURL}/lastTrainStatus/${name}`);
+      result = result.data;
+      if (result.length > 0) {
+        if (result[0].lastTrain == 'success') {} else {
+          setStatusLast(false);
+        }
+      }
+    }
+    // console.log(lastTrainStatus)
+    // var temp = lastTrainStatus.filter((item) => item.modelName == name);
+    // if (temp.length > 0) {
+    //   if (temp[0].lastTrain == 'success') {} else {
+    //     setStatusLast(false);
+    //   }
+    // }
+    fetchData();
+  }, [])
 
   return (
     <div
@@ -139,15 +164,18 @@ export default function ModelListItem({
           style={{
             fontSize: 36,
             fontWeight: 700,
-            marginLeft: "5%",
+            marginLeft: "2.5%",
             flex: 10,
             color: "#FFFFFF",
+            display: 'flex',
+            alignItems: 'center',
           }}
           onClick={() => {
             setOpen(!open);
             handleClick();
           }}
         >
+          <img src={statusLast ? check : deleteButton} style={{ height: 16, marginRight: 10}}/>
           {name}
         </div>
         <input

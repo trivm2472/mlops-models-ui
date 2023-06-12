@@ -26,6 +26,7 @@ export default function Home() {
   const [monitorUrl, setMonitorUrl] = useState(jenkinsUrl[0]);
   const [keyToogle, setKeyToogle] = useState(false);
   const [trainingModel, setTrainingModel] = useState([]);
+  const [lastTrainStatus, setLastTrainStatus] = useState([]);
 
   const Popup = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -270,8 +271,9 @@ export default function Home() {
       );
       setMonitorUrl(deployStatus.data.urlLink);
       const training = await axios.get(`${apiConfig.vercelURL}/training`);
-      console.log("training result", training.data);
       setTrainingModel(training.data);
+      const lastTrain = await axios.get(`${apiConfig.vercelURL}/lastTrainStatus`);
+      setLastTrainStatus(lastTrain.data)
       if (deployStatus.data.status != "idle") {
         setIsDeployed(true);
         const temp = await axios.post(`${apiConfig.vercelURL}/getModelList`, {
@@ -427,6 +429,7 @@ export default function Home() {
                   keyToogle={keyToogle}
                   setKeyToogle={setKeyToogle}
                   trainingModel={trainingModel}
+                  lastTrainStatus={lastTrainStatus}
                 />
               );
             })
