@@ -270,7 +270,7 @@ export default function Home() {
       );
       setMonitorUrl(deployStatus.data.urlLink);
       const training = await axios.get(`${apiConfig.vercelURL}/training`);
-      console.log("training result", training.data)
+      console.log("training result", training.data);
       setTrainingModel(training.data);
       if (deployStatus.data.status != "idle") {
         setIsDeployed(true);
@@ -359,26 +359,42 @@ export default function Home() {
           onClick={handleClick}
         />
       </div>
-      <button
+      <div
         style={{
+          display: "flex",
+          flexDirection: "column",
           marginTop: 45,
           marginBottom: -10,
-          marginLeft: "10%",
-          width: 200,
-          height: 45,
-          fontSize: 24,
-          borderRadius: 5,
-          borderWidth: 1.2,
-          fontWeight: "bold",
-          color: "white",
-          backgroundColor: "#4593C6",
-        }}
-        onClick={() => {
-          navigate("/train/0");
+          // alignItems: "center",
         }}
       >
-        + New model
-      </button>
+        <button
+          style={{
+            marginLeft: "10%",
+            width: 200,
+            height: 45,
+            fontSize: 24,
+            borderRadius: 5,
+            borderWidth: 1.2,
+            fontWeight: "bold",
+            color: "white",
+            backgroundColor: "#4593C6",
+          }}
+          onClick={() => {
+            navigate("/train/0");
+          }}
+        >
+          + New model
+        </button>
+        <a
+          href={monitorUrl}
+          target="_blank"
+          id="monitor-link"
+          style={{ fontSize: 18 , marginLeft: '10%', marginTop: 10, display: trainingModel.length == 0 ? 'none' : ''}}
+        >
+          Click here to monitor training process
+        </a>
+      </div>
       <div
         className="home-content"
         style={{ display: "flex", flexDirection: "row", marginTop: 30 }}
@@ -485,9 +501,9 @@ export default function Home() {
                     <img
                       src={closeIcon}
                       style={{ width: 16, height: 16, marginLeft: 15 }}
-                      onClick={()=>{
+                      onClick={() => {
                         var temp = deployedData;
-                        temp = temp.filter((obj) => obj.id != item.id)
+                        temp = temp.filter((obj) => obj.id != item.id);
                         setDeployedData(temp);
                         setKeyToogle(!keyToogle);
                       }}

@@ -62,7 +62,7 @@ export default function TrainModel() {
             `${JenkinsConfig.jenkinsURL}/job/${JenkinsConfig.trainJob}/job/main/buildWithParameters?MODEL_NAME=${modelName}&DATA_URL=${dataUrl}&IMG=${img}&BATCH=${batch}&EPOCH=${epoch}&WEIGHT=${weight}`,
             {}
           );
-
+          
           const apiResponse = await axios.get(`${apiConfig.vercelURL}/train/${modelName}`)
           setIsOpen(!isOpen);
           alert('Build request has been sent');
